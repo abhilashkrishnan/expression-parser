@@ -1,1 +1,1 @@
-["AND",["IN", "user.city",["Dublin", "San Francisco"]],["GT","user.age",20]]
+["AND",["IN","user.city",["Dublin","San Francisco"]],["GT","user.age",20]]
