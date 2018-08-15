@@ -1,0 +1,41 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>expression-parser</groupId>
+  <artifactId>expression-parser</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>expression-parser</name>
+  <description>Recursive Descent Expression Parser</description>
+  <dependencies>
+  		<dependency>
+	    <groupId>com.fasterxml.jackson.core</groupId>
+	    <artifactId>jackson-databind</artifactId>
+	    <version>2.9.6</version>
+	</dependency>
+  </dependencies>
+  <build>
+    <sourceDirectory>src/main/java</sourceDirectory>
+    <testSourceDirectory>src/main/test</testSourceDirectory>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.7.0</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+      <plugin>
+	      <groupId>org.codehaus.mojo</groupId>
+	      <artifactId>exec-maven-plugin</artifactId>
+	      <version>1.6.0</version>
+	      <configuration>
+	           <mainClass>zeta.Main</mainClass>
+	           <arguments>
+		           <argument>scripts/2.exp</argument>
+		           <argument>scripts/data.json</argument>
+		       </arguments>
+	      </configuration>
+	  </plugin>
+    </plugins>
+  </build>
+</project>

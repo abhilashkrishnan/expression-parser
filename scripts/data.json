@@ -1,0 +1,8 @@
+{
+ "user" : {
+   "city" : "Kochi",
+   "age" : 35,
+   "zip" : 128,
+   "minor" : true
+  }
+}

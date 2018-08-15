@@ -1,0 +1,1 @@
+["NOT",["IN", "user.city",["Mumbai", "Kochi"]],["LT","user.age",30],["NOT","user.minor"],["EQ","user.zip",123]]

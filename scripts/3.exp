@@ -1,0 +1,1 @@
+["AND",["IN", "user.city",["Mumbai", "Kochi"]],["GT","user.age",20]]
