@@ -1,1 +1,1 @@
-["NOT",["IN", "user.city",["Mumbai", "Kochi"]],["LT","user.age",30],["NOT","user.minor"],["EQ","user.zip",123]]
+["NOT",["IN", "user.city",["London", "New York"]],["LT","user.age",30],["NOT","user.minor"],["EQ","user.zip",123]]
