@@ -1,6 +1,6 @@
 # Expression Parser
 
-``Recursive Descent Parser using Top Down Approach for DSL - Domain Specific Language for evaluating Decision Trees.``
+``Recursive Descent Parser using Top Down Approach for DSL - Domain Specific Language in evaluating Decision Trees.``
 
 ``Sample DSL scripts and JSON data are available under scripts folder.``
 
