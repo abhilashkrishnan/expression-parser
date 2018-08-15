@@ -4,4 +4,6 @@
 
 ```Sample DSL scripts and JSON data are available under scripts folder.```
 
+To build the parser run ```mvn clean install```
+
 To execute the code run ```mvn exec:java``` 
