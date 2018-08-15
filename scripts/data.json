@@ -1,8 +1,8 @@
 {
  "user" : {
-   "city" : "Kochi",
+   "city" : "London",
    "age" : 35,
-   "zip" : 128,
-   "minor" : true
+   "zip" : 200758,
+   "minor" : false
   }
 }
