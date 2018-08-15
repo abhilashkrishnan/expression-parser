@@ -1,8 +1,8 @@
 {
  "user" : {
-   "city" : "London",
-   "age" : 35,
-   "zip" : 200758,
+   "city" : "Berlin",
+   "age" : 21,
+   "zip" : 20078,
    "minor" : false
   }
 }
