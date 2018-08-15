@@ -1,1 +1,1 @@
-["AND",["OR",["IN", "user.city",["Mumbai", "Kochi"]],["EQ","user.age",21]],["GT","user.zip",200]]
+["AND",["OR",["IN", "user.city",["Berlin", "Singapore"]],["EQ","user.age",21]],["GT","user.zip",20078]]
