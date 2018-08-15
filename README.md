@@ -6,4 +6,4 @@
 
 To build the parser run ```mvn clean install```
 
-To execute the code run ```mvn exec:java``` 
+To run the parser execute ```mvn exec:java``` 
