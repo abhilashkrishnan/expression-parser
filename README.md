@@ -4,4 +4,8 @@
 
 ```Sample DSL scripts and JSON data are available under scripts folder.```
 
+```To specify different expression script change the script file inside pom.xml```
+
+To build the application run ```mvn clean install```
+
 To execute the code run ```mvn exec:java``` 

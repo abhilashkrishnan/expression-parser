@@ -51,7 +51,7 @@ public class Parser {
 			while ((s = br.readLine()) != null)
 				sb.append(s);
 		} catch (IOException e) {
-
+			throw new RuntimeException("Json file is unvailable");
 		}
 
 		this.json = sb.toString();
@@ -85,7 +85,7 @@ public class Parser {
 			}
 			scanner.close();
 		} catch (FileNotFoundException e) {
-			throw new RuntimeException(e.getMessage());
+			throw new RuntimeException("Expression file is unavailable");
 		}
 
 	}
