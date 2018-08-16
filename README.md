@@ -6,6 +6,7 @@
 
 ```To specify different expression script change the script file inside pom.xml```
 
-To build the application run ```mvn clean install```
+To build the parser run ```mvn clean install```
 
-To execute the code run ```mvn exec:java``` 
+To run the parser execute ```mvn exec:java``` 
+
