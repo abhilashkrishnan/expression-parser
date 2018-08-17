@@ -51,7 +51,7 @@ public class Parser {
 			while ((s = br.readLine()) != null)
 				sb.append(s);
 		} catch (IOException e) {
-			throw new RuntimeException("Json file is unvailable");
+			throw new RuntimeException("Json file is unavailable");
 		}
 
 		this.json = sb.toString();
@@ -108,53 +108,10 @@ public class Parser {
 				Exp op = OpFactory.getOp(token).get();
 
 				if (op instanceof INExp) {
-
-					stack.push(op);
-
-					String t = tokens.removeFirst();
-					JsonNode node = Json.getJsonNode(json, t).get();
-
-					if (node != null || !node.isMissingNode()) {
-						String type = Json.getNodeType(node);
-
-						if (type.equals(JsonNodeType.STRING.name())) {
-							StringExp<String> sExp = new StringExp<>(node.textValue());
-							stack.push(sExp);
-						} else if (type.equals(JsonNodeType.NUMBER.name())) {
-							IntegerExp<Integer> iExp = new IntegerExp<>(node.intValue());
-							stack.push(iExp);
-						}
-					}
-
-					String val = tokens.removeFirst();
-					StringExp<String> entries = new StringExp<>();
-
-					while (!terminal() && !tokens.isEmpty()) {
-						val = tokens.removeFirst();
-						entries.addEntry(val);
-					}
-					stack.push(entries);
-
-					stack.push(new BoolExp(execute(stack.pop(), stack.pop(), stack.pop())));
-
-					skip();
-					skip();
-
+					inOperation(op);
 				} else if (op instanceof NOTExp) {
-
 					if (!start()) {
-						String t = tokens.removeFirst();
-						JsonNode node = Json.getJsonNode(json, t).get();
-
-						if (node != null || !node.isMissingNode()) {
-							String type = Json.getNodeType(node);
-
-							if (type.equals(JsonNodeType.BOOLEAN.name())) {
-								NOTExp nExp = new NOTExp<>(node.booleanValue());
-								stack.push(new BoolExp<>(nExp.execute(nExp, null)));
-								skip();
-							}
-						}
+						notOperation(op);
 					} else {
 						stack.push(op);
 						continue;
@@ -167,79 +124,19 @@ public class Parser {
 
 				if ((tokens.isEmpty() && token.equals(Token.TERMINAL.getToken()))) {
 
-					Exp e1 = stack.pop();
-					Exp e2 = stack.pop();
-					Exp e3 = stack.peek();
-
-					if (!(e3 instanceof Binary) || !(e3 instanceof Unary) || !(e3 instanceof Nary)) {
-
-						List<Exp> exps = new ArrayList<>();
-						exps.add(e1);
-						exps.add(e2);
-
-						while (!empty()) {
-							e3 = previous();
-							if ((e3 instanceof Unary) || (e3 instanceof Binary) || (e3 instanceof Nary)) {
-								stack.push(new BoolExp(execute(exps, e3)));
-								break;
-							} else {
-								exps.add(e3);
-							}
-						}
-					}
+					tokenEmptyAndTerminalOperation();
+					
 				} else if (!tokens.isEmpty() && token.equals(Token.TERMINAL.getToken())) {
 
-					List<Exp> exps = new ArrayList<>();
-					Exp e = stack.peek();
-
-					while (true) {
-						e = previous();
-						if ((e instanceof Unary) || (e instanceof Binary) || (e instanceof Nary)) {
-							stack.push(new BoolExp(execute(exps, e)));
-							break;
-						} else {
-							exps.add(e);
-						}
-					}
-
+					notTokenEmptyAndTerminalOperation();
+					
 				} else if (terminal()) {
 
-					Exp left = stack.pop();
-					Exp right = stack.pop();
-					Exp op = stack.pop();
-					stack.push(new BoolExp(execute(left, right, op)));
+					terminalOperation();
 					continue;
 				} else {
-
-					JsonNode node = Json.getJsonNode(json, token).get();
-
-					if (node != null || !node.isMissingNode()) {
-						String type = Json.getNodeType(node);
-
-						if (type.equals(JsonNodeType.STRING.name())) {
-							StringExp<String> sExp = new StringExp<>(node.textValue());
-							stack.push(sExp);
-
-							String val = tokens.removeFirst();
-							StringExp<String> valExp = new StringExp<>(val);
-							stack.push(valExp);
-
-							stack.push(new BoolExp(execute(stack.pop(), stack.pop(), stack.pop())));
-							if (terminal())
-								skip();
-						} else if (type.equals(JsonNodeType.NUMBER.name())) {
-							IntegerExp<Integer> iExp = new IntegerExp<>(node.intValue());
-							stack.push(iExp);
-
-							String val = tokens.removeFirst();
-							IntegerExp<Integer> valExp = new IntegerExp<>(Integer.parseInt(val));
-							stack.push(valExp);
-
-							stack.push(new BoolExp(execute(stack.pop(), stack.pop(), stack.pop())));
-							if (terminal())
-								skip();
-						}
-					}
+					
+					notTerminalOperation(token);
 				}
 			}
 		}
@@ -251,6 +148,135 @@ public class Parser {
 		return eval;
 	}
 
+	private void inOperation(Exp op) {
+		
+		stack.push(op);
+		String t = tokens.removeFirst();
+		JsonNode node = Json.getJsonNode(json, t).get();
+
+		if (node != null || !node.isMissingNode()) {
+			String type = Json.getNodeType(node);
+
+			if (type.equals(JsonNodeType.STRING.name())) {
+				StringExp<String> sExp = new StringExp<>(node.textValue());
+				stack.push(sExp);
+			} else if (type.equals(JsonNodeType.NUMBER.name())) {
+				IntegerExp<Integer> iExp = new IntegerExp<>(node.intValue());
+				stack.push(iExp);
+			}
+		}
+
+		String val = tokens.removeFirst();
+		StringExp<String> entries = new StringExp<>();
+
+		while (!terminal() && !tokens.isEmpty()) {
+			val = tokens.removeFirst();
+			entries.addEntry(val);
+		}
+		stack.push(entries);
+
+		stack.push(new BoolExp(execute(stack.pop(), stack.pop(), stack.pop())));
+
+		skip();
+		skip();
+	}
+
+	private void notOperation(Exp op) {
+
+		String t = tokens.removeFirst();
+		JsonNode node = Json.getJsonNode(json, t).get();
+
+		if (node != null || !node.isMissingNode()) {
+			String type = Json.getNodeType(node);
+
+			if (type.equals(JsonNodeType.BOOLEAN.name())) {
+				NOTExp nExp = new NOTExp<>(node.booleanValue());
+				stack.push(new BoolExp<>(nExp.execute(nExp, null)));
+				skip();
+			}
+		}
+	}
+	
+	private void tokenEmptyAndTerminalOperation() {
+		
+		Exp e1 = stack.pop();
+		Exp e2 = stack.pop();
+		Exp e3 = stack.peek();
+
+		if (!(e3 instanceof Binary) || !(e3 instanceof Unary) || !(e3 instanceof Nary)) {
+
+			List<Exp> exps = new ArrayList<>();
+			exps.add(e1);
+			exps.add(e2);
+
+			while (!empty()) {
+				e3 = previous();
+				if ((e3 instanceof Unary) || (e3 instanceof Binary) || (e3 instanceof Nary)) {
+					stack.push(new BoolExp(execute(exps, e3)));
+					break;
+				} else {
+					exps.add(e3);
+				}
+			}
+		}
+	}
+
+	private void notTokenEmptyAndTerminalOperation() {
+		
+		List<Exp> exps = new ArrayList<>();
+		Exp e = stack.peek();
+
+		while (true) {
+			e = previous();
+			if ((e instanceof Unary) || (e instanceof Binary) || (e instanceof Nary)) {
+				stack.push(new BoolExp(execute(exps, e)));
+				break;
+			} else {
+				exps.add(e);
+			}
+		}
+	}
+	
+	private void terminalOperation() {
+		Exp left = stack.pop();
+		Exp right = stack.pop();
+		Exp op = stack.pop();
+		stack.push(new BoolExp(execute(left, right, op)));
+	}
+	
+	private void notTerminalOperation(String token) {
+		
+		JsonNode node = Json.getJsonNode(json, token).get();
+
+		if (node != null || !node.isMissingNode()) {
+			String type = Json.getNodeType(node);
+
+			if (type.equals(JsonNodeType.STRING.name())) {
+				StringExp<String> sExp = new StringExp<>(node.textValue());
+				stack.push(sExp);
+
+				String val = tokens.removeFirst();
+				StringExp<String> valExp = new StringExp<>(val);
+				stack.push(valExp);
+
+				stack.push(new BoolExp(execute(stack.pop(), stack.pop(), stack.pop())));
+				if (terminal())
+					skip();
+			} else if (type.equals(JsonNodeType.NUMBER.name())) {
+				IntegerExp<Integer> iExp = new IntegerExp<>(node.intValue());
+				stack.push(iExp);
+
+				String val = tokens.removeFirst();
+				IntegerExp<Integer> valExp = new IntegerExp<>(Integer.parseInt(val));
+				stack.push(valExp);
+
+				stack.push(new BoolExp(execute(stack.pop(), stack.pop(), stack.pop())));
+				if (terminal())
+					skip();
+			}
+		}
+	}
+	
 	public boolean execute(List<Exp> exps, Exp op) {
 		Exp[] expArr = new Exp[exps.size()];
 		int i = 0;
